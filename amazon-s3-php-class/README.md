@@ -6,7 +6,7 @@ https://github.com/tpyo/amazon-s3-php-class/S3.inc.php
 I found it in the early 2022 timeframe. My main intention was to use this against a MinIO system that we have built to support our clients application. When I went to go start using it, I found several architectural decisions that I felt need revisiting.
 
 --
-  Chief among these is the expected use of the class being called statically. I felt this introduced too many issues, so I de-static-fied the entire code base. All methods, and variables are now set accessed from a real instantiated object. Two main benefit came of this: a) one can now create code that talks to three S3 systems at once. b) The main S3 object is injected into an S3Request at instantiation time so that it has access to any variables/methods it might need. This helped to simplify that class as well.
+  Chief among these is the expected use of the class being called statically. I felt this introduced too many issues, so I de-static-fied the entire code base. All methods, and variables are now set/accessed from a real instantiated object. Two main benefit came of this: a) one can now create code that talks to multiple S3 systems at once. b) The main S3 object is injected into an S3Request at instantiation time so that it has access to any variables/methods it might need. This helped to simplify that class as well.
 
   After this, I made three specific feature additions:
    a) Tagging support
