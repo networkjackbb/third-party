@@ -767,10 +767,13 @@ class S3
 	* @param boolean $checkExistence Whether to check if the object was already there
 	* @return boolean
 	*/
-	public function putObject($input, $bucket, $uri, $acl = self::ACL_PRIVATE, $metaHeaders = array(), $requestHeaders = array(), $storageClass = self::STORAGE_CLASS_STANDARD, $serverSideEncryption = self::SSE_NONE, $checkExistence = false)
+	public function putObject($input, $bucket, $uri, $acl=self::ACL_PRIVATE, $metaHeaders=array(), $requestHeaders=array(), $storageClass=false, $serverSideEncryption=false, $checkExistence=false)
 	{
-		if ($input === false) return false;
-		$this->LastRequest = $rest = new S3Request($this, 'PUT', $bucket, $uri);
+		if ($input === false)				return false;
+
+		if (false === $storageClass)					$storageClass = self::STORAGE_CLASS_STANDARD;
+		if (false === $serverSideEncryption)			$serverSideEncryption = self::SSE_NONE;
+
 
 		if (!is_array($input))		$input = array(
 					'data' => $input, 'size' => strlen($input),
@@ -782,6 +785,9 @@ class S3
 			$response = $this->getObjectInfo($bucket, $uri);
 			if (isset($response['hash']) && bin2hex(base64_decode($input['md5sum'])) == $response['hash']) 				return true;
 		}
+
+		$this->LastRequest = $rest = new S3Request($this, 'PUT', $bucket, $uri);
+
 
 		// Data
 		if (isset($input['fp']))
@@ -831,15 +837,16 @@ class S3
 		if ($rest->size >= 0 && ($rest->fp !== false || $rest->data !== false))
 		{
 			$rest->setHeader('Content-Type', $input['type']);
-			if (isset($input['md5sum'])) $rest->setHeader('Content-MD5', $input['md5sum']);
+			if (isset($input['md5sum']))				$rest->setHeader('Content-MD5', $input['md5sum']);
 
-			if (isset($input['sha256sum'])) $rest->setAmzHeader('x-amz-content-sha256', $input['sha256sum']);
+			if (isset($input['sha256sum']))			$rest->setAmzHeader('x-amz-content-sha256', $input['sha256sum']);
 
 			$rest->setAmzHeader('x-amz-acl', $acl);
-			foreach ($metaHeaders as $h => $v) $rest->setAmzHeader('x-amz-meta-'.$h, $v);
+			foreach ($metaHeaders as $h => $v)		$rest->setAmzHeader('x-amz-meta-'.$h, $v);
 			$rest->getResponse();
-		} else
-			$rest->response->error = array('code' => 0, 'message' => 'Missing input parameters');
+		}
+		else
+				$rest->response->error = array('code' => 0, 'message' => 'Missing input parameters');
 
 		if ($rest->response->error === false && $rest->response->code !== 200)
 			$rest->response->error = array('code' => $rest->response->code, 'message' => 'Unexpected HTTP status');
@@ -864,9 +871,9 @@ class S3
 	* @param string $contentType Content type
 	* @return boolean
 	*/
-	public function putObjectFile($file, $bucket, $uri, $acl = self::ACL_PRIVATE, $metaHeaders = array(), $contentType = null)
+	public function putObjectFile($file, $bucket, $uri, $acl = self::ACL_PRIVATE, $metaHeaders = array(), $contentType = null, $storageClass=false, $serverSideEncryption=false, $checkExistence=false)
 	{
-		return self::putObject(self::inputFile($file), $bucket, $uri, $acl, $metaHeaders, $contentType);
+		return self::putObject(self::inputFile($file), $bucket, $uri, $acl, $metaHeaders, $contentType, $storageClass, $serverSideEncryption, $checkExistence);
 	}
 
 
@@ -881,9 +888,9 @@ class S3
 	* @param string $contentType Content type
 	* @return boolean
 	*/
-	public function putObjectString($string, $bucket, $uri, $acl = self::ACL_PRIVATE, $metaHeaders = array(), $contentType = 'text/plain')
+	public function putObjectString($string, $bucket, $uri, $acl = self::ACL_PRIVATE, $metaHeaders = array(), $contentType = 'text/plain', $storageClass=false, $serverSideEncryption=false, $checkExistence=false)
 	{
-		return self::putObject($string, $bucket, $uri, $acl, $metaHeaders, $contentType);
+		return self::putObject($string, $bucket, $uri, $acl, $metaHeaders, $contentType, $storageClass, $serverSideEncryption, $checkExistence);
 	}
 
 
