@@ -1,6 +1,6 @@
 This S3 class originated from Donovan Schönknecht's popular S3 php class:
 
-https://github.com/tpyo/amazon-s3-php-class/S3.inc.php
+[https://github.com/tpyo/amazon-s3-php-class/]
 
 
 I found it in the early 2022 timeframe. My main intention was to use this against a MinIO system that we have built to support our clients application. When I went to go start using it, I found several architectural decisions that I felt need revisiting.
