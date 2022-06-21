@@ -3,10 +3,10 @@ This S3 class originated from Donovan Schönknecht's popular S3 php class:
 [https://github.com/tpyo/amazon-s3-php-class/]
 
 
-I found it in the early 2022 timeframe. My main intention was to use this against a MinIO system that we have built to support our clients application. When I went to go start using it, I found several architectural decisions that I felt need revisiting.
+I found it in the early 2022 timeframe. My main intention was to use this against a MinIO system that we have built to support our clients application. When I went to go start using it, I found several architectural decisions that I felt needed revisiting.
 
 --
-  Chief among these is the expected use of the class being called statically. I felt this introduced too many issues, so I de-static-fied the entire code base. All methods, and variables are now set/accessed from a real instantiated object. Two main benefit came of this: a) one can now create code that talks to multiple S3 systems at once. b) The main S3 object is injected into an S3Request at instantiation time so that it has access to any variables/methods it might need. This helped to simplify that class as well.
+  Chief among these is the expected use of the class being called statically. I felt this introduced too many issues, so I de-static-fied the entire code base. All methods, and variables are now set/accessed from a real instantiated object. Two main benefits came of this: a) one can now create code that talks to multiple S3 systems at once. b) The main S3 object is injected into an S3Request at instantiation time so that it has access to any variables/methods it might need. This helped to simplify that class as well.
 
   After this, I made three specific feature additions:
    a) Tagging support
@@ -24,5 +24,4 @@ Please feel free to backport anything I've done to the original as your own pull
 
 --
 Brian Blood
-
-
+networkjack.info
