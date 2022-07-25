@@ -2766,7 +2766,7 @@ final class S3Request
 		{
 			if (' ' == substr($data, 0, 1))		// continuation	of previous header
 			{
-				if (!$this->lastRcvdHdr)
+				if ($this->lastRcvdHdr)
 				{
 					$this->response->headers[$this->lastRcvdHdr] .= $data;
 					return $strlen;
